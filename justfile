@@ -1,38 +1,37 @@
-prefix := "/usr/local"
+prefix := "/usr"
 bindir := prefix + "/bin"
 datadir := prefix + "/share"
 app_id := "com.github.fredsilveyra.cosmic-colorpicker-applet"
+destdir := env_var_or_default("DESTDIR", "")
 
-# Build binary in release mode
+user_prefix := env_var("HOME") + "/.local"
+user_bindir := user_prefix + "/bin"
+user_datadir := user_prefix + "/share"
+
+# Build optimized release binary
 build:
     cargo build --release
 
-# Install locally for the current user (no sudo required)
+# Local user installation (no sudo required)
 install-user: build
-    @echo "Stopping previous instances..."
-    -killall -q cosmic-colorpicker-applet || true
-    @echo "Installing binary to ~/.local/bin..."
-    install -Dm0755 "target/release/cosmic-colorpicker-applet" "$$HOME/.local/bin/cosmic-colorpicker-applet"
-    @echo "Restarting COSMIC Panel..."
-    -killall -q -9 cosmic-panel || true
-    @echo "Installation completed successfully!"
+    install -Dm0755 "target/release/cosmic-colorpicker-applet" "{{user_bindir}}/cosmic-colorpicker-applet"
+    install -Dm0644 "resources/{{app_id}}.desktop" "{{user_datadir}}/applications/{{app_id}}.desktop"
+    -update-desktop-database "{{user_datadir}}/applications"
 
 # System-wide installation (requires sudo)
 install: build
-    @echo "Stopping previous instances..."
-    -killall -q cosmic-colorpicker-applet || true
-    @echo "Installing binary to {{bindir}}..."
-    install -Dm0755 "target/release/cosmic-colorpicker-applet" "{{DESTDIR}}{{bindir}}/cosmic-colorpicker-applet"
-    @echo "Installing desktop entry..."
-    install -Dm0644 "resources/{{app_id}}.desktop" "{{DESTDIR}}{{datadir}}/applications/{{app_id}}.desktop"
-    @echo "Restarting COSMIC Panel..."
-    -killall -q -9 cosmic-panel || true
-    @echo "System-wide installation completed successfully!"
+    install -Dm0755 "target/release/cosmic-colorpicker-applet" "{{destdir}}{{bindir}}/cosmic-colorpicker-applet"
+    install -Dm0644 "resources/{{app_id}}.desktop" "{{destdir}}{{datadir}}/applications/{{app_id}}.desktop"
+    -if [ -z "{{destdir}}" ]; then update-desktop-database "{{datadir}}/applications"; fi
 
-# Uninstall from system and user directories
+# Uninstall from local user directory
+uninstall-user:
+    rm -f "{{user_bindir}}/cosmic-colorpicker-applet"
+    rm -f "{{user_datadir}}/applications/{{app_id}}.desktop"
+    -update-desktop-database "{{user_datadir}}/applications"
+
+# System-wide uninstallation
 uninstall:
-    rm -f "{{DESTDIR}}{{bindir}}/cosmic-colorpicker-applet"
-    rm -f "{{DESTDIR}}{{datadir}}/applications/{{app_id}}.desktop"
-    rm -f "$$HOME/.local/bin/cosmic-colorpicker-applet"
-    -killall -q -9 cosmic-panel || true
-    @echo "Applet removed successfully."
+    rm -f "{{destdir}}{{bindir}}/cosmic-colorpicker-applet"
+    rm -f "{{destdir}}{{datadir}}/applications/{{app_id}}.desktop"
+    -if [ -z "{{destdir}}" ]; then update-desktop-database "{{datadir}}/applications"; fi
