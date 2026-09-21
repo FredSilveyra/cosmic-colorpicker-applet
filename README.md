@@ -78,3 +78,15 @@ sudo just uninstall
 
 ## License
 This project is licensed under the **GNU General Public License v3.0 or later** (GPL-3.0-or-later). See the LICENSE file for details.
+
+## Screenshots
+<img width="364" height="359" alt="image" src="https://github.com/user-attachments/assets/cc07e728-1b5b-4ab1-bc47-b6a9a2feb1f8" />
+
+<img width="364" height="359" alt="image" src="https://github.com/user-attachments/assets/2a7fd21d-963b-4163-a7f7-a4a0367ccd81" />
+
+<img width="364" height="412" alt="image" src="https://github.com/user-attachments/assets/939a6268-00b8-437e-9d2e-39616a47eb73" />
+
+<img width="364" height="203" alt="image" src="https://github.com/user-attachments/assets/3826910c-e7b2-494f-9623-0c90ce53ba41" />
+
+
+
