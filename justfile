@@ -1,85 +1,38 @@
-name := '{{ project-name }}'
-appid := '{{ appid }}'
-{% raw %}
-rootdir := ''
-prefix := '/usr'
+prefix := "/usr/local"
+bindir := prefix + "/bin"
+datadir := prefix + "/share"
+app_id := "com.github.fredsilveyra.cosmic-colorpicker-applet"
 
-appdata := appid + '.metainfo.xml'
-desktop := appid + '.desktop'
+# Build binary in release mode
+build:
+    cargo build --release
 
-# Installation paths
-base-dir := absolute_path(clean(rootdir / prefix))
-cargo-target-dir := env('CARGO_TARGET_DIR', 'target')
-appdata-dst := base-dir / 'share' / 'appdata' / appdata
-bin-dst := base-dir / 'bin' / name
-desktop-dst := base-dir / 'share' / 'applications' / desktop
-icon-dst := base-dir / 'share' / 'icons' / 'hicolor' / 'scalable' / 'apps' / appid + '.svg'
+# Install locally for the current user (no sudo required)
+install-user: build
+    @echo "Stopping previous instances..."
+    -killall -q cosmic-colorpicker-applet || true
+    @echo "Installing binary to ~/.local/bin..."
+    install -Dm0755 "target/release/cosmic-colorpicker-applet" "$$HOME/.local/bin/cosmic-colorpicker-applet"
+    @echo "Restarting COSMIC Panel..."
+    -killall -q -9 cosmic-panel || true
+    @echo "Installation completed successfully!"
 
-# Default recipe which runs `just build-release`
-default: build-release
+# System-wide installation (requires sudo)
+install: build
+    @echo "Stopping previous instances..."
+    -killall -q cosmic-colorpicker-applet || true
+    @echo "Installing binary to {{bindir}}..."
+    install -Dm0755 "target/release/cosmic-colorpicker-applet" "{{DESTDIR}}{{bindir}}/cosmic-colorpicker-applet"
+    @echo "Installing desktop entry..."
+    install -Dm0644 "resources/{{app_id}}.desktop" "{{DESTDIR}}{{datadir}}/applications/{{app_id}}.desktop"
+    @echo "Restarting COSMIC Panel..."
+    -killall -q -9 cosmic-panel || true
+    @echo "System-wide installation completed successfully!"
 
-# Runs `cargo clean`
-clean:
-    cargo clean
-
-# Removes vendored dependencies
-clean-vendor:
-    rm -rf .cargo vendor vendor.tar
-
-# `cargo clean` and removes vendored dependencies
-clean-dist: clean clean-vendor
-
-# Compiles with debug profile
-build-debug *args:
-    cargo build {{args}}
-
-# Compiles with release profile
-build-release *args: (build-debug '--release' args)
-
-# Compiles release profile with vendored dependencies
-build-vendored *args: vendor-extract (build-release '--frozen --offline' args)
-
-# Runs a clippy check
-check *args:
-    cargo clippy --all-features {{args}} -- -W clippy::pedantic
-
-# Runs a clippy check with JSON message format
-check-json: (check '--message-format=json')
-
-# Run the application for testing purposes
-run *args:
-    env RUST_BACKTRACE=full cargo run --release {{args}}
-
-# Installs files
-install:
-    install -Dm0755 {{ cargo-target-dir / 'release' / name }} {{bin-dst}}
-    install -Dm0644 {{ 'target' / 'xdgen' / 'app.desktop' }} {{desktop-dst}}
-    install -Dm0644 {{ 'target' / 'xdgen' / 'app.metainfo.xml' }} {{appdata-dst}}
-    install -Dm0644 resources/icon.svg {{icon-dst}}
-
-# Uninstalls installed files
+# Uninstall from system and user directories
 uninstall:
-    rm {{bin-dst}} {{desktop-dst}} {{icon-dst}}
-
-# Vendor dependencies locally
-vendor:
-    mkdir -p .cargo
-    cargo vendor --sync Cargo.toml | head -n -1 > .cargo/config.toml
-    echo 'directory = "vendor"' >> .cargo/config.toml
-    echo >> .cargo/config.toml
-    rm -rf .cargo vendor
-
-# Extracts vendored dependencies
-vendor-extract:
-    rm -rf vendor
-    tar pxf vendor.tar
-
-# Bump cargo version, create git commit, and create tag
-tag version:
-    find -type f -name Cargo.toml -exec sed -i '0,/^version/s/^version.*/version = "{{version}}"/' '{}' \; -exec git add '{}' \;
-    cargo check
-    cargo clean
-    git add Cargo.lock
-    git commit -m 'release: {{version}}'
-    git tag -a {{version}} -m ''
-{% endraw %}
+    rm -f "{{DESTDIR}}{{bindir}}/cosmic-colorpicker-applet"
+    rm -f "{{DESTDIR}}{{datadir}}/applications/{{app_id}}.desktop"
+    rm -f "$$HOME/.local/bin/cosmic-colorpicker-applet"
+    -killall -q -9 cosmic-panel || true
+    @echo "Applet removed successfully."

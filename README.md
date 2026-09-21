@@ -1,33 +1,72 @@
-# COSMIC Applet Template
+# COSMIC Color Picker Applet
 
-A template for developing applets for the COSMIC™ desktop environment using [libcosmic][libcosmic].
+A lightweight, native color picker panel applet built with Rust and `libcosmic` for the COSMIC Desktop environment.
 
-## Getting Started
+![License](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)
+![COSMIC](https://img.shields.io/badge/COSMIC-Desktop-orange.svg)
 
-> Please refer to the [COSMIC Trademark Policy][cosmic-trademark] when choosing a name for a project.
+## Features
 
-To create an applet with this template, [install `cargo generate`][cargo-generate] and run:
+- **Native COSMIC UI:** Matches your system theme (dark/light, accent colors, and typography).
+- **History Management:** Automatically keeps recent picked colors.
+- **Favorites & Custom Labels:** Bookmark frequently used colors and rename them inline.
+- **Instant Clipboard:** Copies color codes (`HEX`) directly to the Wayland clipboard.
+- **Wayland Native:** Designed specifically for `cosmic-comp`.
 
-```sh
-cargo generate gh:pop-os/cosmic-applet-template
+## Requirements & Dependencies
+
+Make sure you have Rust and the required runtime tools installed:
+
+### Fedora
+```bash
+sudo dnf install -y rust cargo just grim slurp ImageMagick wl-clipboard
 ```
 
-A [justfile](./justfile) is included by default with common recipes used by other COSMIC projects. Install from [casey/just][just]
+### Ubuntu/Pop!_OS
+```bash
+sudo apt update && sudo apt install -y rustc cargo just grim slurp imagemagick wl-clipboard
+```
 
-- `just` builds the applet with the default `just build-release` recipe
-- `just run` builds and runs the applet
-- `just install` installs the project into the system
-- `just vendor` creates a vendored tarball
-- `just build-vendored` compiles with vendored dependencies from that tarball
-- `just check` runs clippy on the project to check for linter warnings
-- `just check-json` can be used by IDEs that support LSP
+### Arch Linux
+```bash
+sudo pacman -S --needed rust just grim slurp imagemagick wl-clipboard
+```
 
-## Documentation
+## Quick Installation
+```bash
+git clone https://github.com/fredsilveyra/cosmic-colorpicker-applet.git
+cd cosmic-colorpicker-applet
+```
 
-Refer to the [libcosmic API documentation][api-docs] and [book][book] for help with building applets with [libcosmic][libcosmic].
+### Option A: Install for current user (Recommended, no sudo needed)
+```bash
+just install-user
+```
 
-[api-docs]: https://pop-os.github.io/libcosmic/cosmic/
-[book]: https://pop-os.github.io/libcosmic-book/
-[cargo-generate]: https://cargo-generate.github.io/cargo-generate/installation.html
-[cosmic-trademark]: https://github.com/pop-os/cosmic-epoch/blob/master/TRADEMARK.md
-[just]: https://github.com/casey/just
+### Option B: System-wide installation
+```bash
+sudo just install
+```
+
+## Adding the Applet to the Panel
+
+1. Open Settings -> Desktop -> Panel.
+2. Scroll to the Applets configuration.
+3. Click Add Applet and select COSMIC Color Picker.
+
+## Uninstall
+```bash
+just uninstall
+```
+
+or for system-wide:
+```bash
+sudo just uninstall
+```
+
+## Credits & Authors
+- Fred Silveyra (@fredsilveyra)
+- Gemini (Google)
+
+## License
+This project is licensed under the **GNU General Public License v3.0 or later** (GPL-3.0-or-later). See the LICENSE file for details.

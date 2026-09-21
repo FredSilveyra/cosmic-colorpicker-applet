@@ -2,9 +2,12 @@
 name = "cosmic-colorpicker-applet"
 version = "0.1.0"
 edition = "2024"
-license = "GPL-3.0"
-description = "Color picker applet for the COSMIC Desktop"
-repository = ""
+authors = ["Fred Silveyra <fredsilveyra>"]
+description = "Natively integrated color picker applet for the COSMIC Desktop panel"
+repository = "https://github.com/fredsilveyra/cosmic-colorpicker-applet"
+license = "GPL-3.0-or-later"
+keywords = ["cosmic", "wayland", "applet", "color-picker", "eyedropper"]
+categories = ["desktop-environment"]
 
 [build-dependencies]
 xdgen = "0.1"

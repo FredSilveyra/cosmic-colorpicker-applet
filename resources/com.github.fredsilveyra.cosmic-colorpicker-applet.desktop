@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=COSMIC Color Picker
+Comment=Native color picker applet for the COSMIC Desktop
+Type=Application
+Exec=cosmic-colorpicker-applet
+Icon=color-select-symbolic
+Terminal=false
+Categories=Utility;Graphics;
+StartupNotify=true
+X-CosmicApplet=true
