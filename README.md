@@ -53,13 +53,21 @@ sudo just install
 1. Open Settings -> Desktop -> Panel.
 2. Scroll to the Applets configuration.
 3. Click Add Applet and select COSMIC Color Picker.
+4. Drag and position the applet wherever you prefer (e.g., next to the system clock).
+
+**Troubleshooting:** If the applet does not immediately appear in the list, restart the panel process from your terminal:
+
+```Bash
+killall cosmic-panel
+```
 
 ## Uninstall
+For local user installation:
 ```bash
 just uninstall
 ```
 
-or for system-wide:
+Or for system-wide:
 ```bash
 sudo just uninstall
 ```
