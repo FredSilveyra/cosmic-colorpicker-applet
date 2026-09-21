@@ -177,7 +177,7 @@ impl cosmic::Application for AppModel {
                     );
                     popup_settings.positioner.size_limits = Limits::NONE
                     .max_width(380.0)
-                    .min_width(320.0)
+                    .min_width(360.0)
                     .min_height(100.0)
                     .max_height(600.0);
                     get_popup(popup_settings)
@@ -366,10 +366,10 @@ impl AppModel {
                         .on_submit(move |_| Message::SaveRename(idx))
                         .width(Length::Fill)
                         .into(),
-                        widget::button::icon(widget::icon::from_name("emblem-ok-symbolic"))
+                        widget::button::standard("Save")
                         .on_press(Message::SaveRename(idx))
                         .into(),
-                        widget::button::icon(widget::icon::from_name("process-stop-symbolic"))
+                        widget::button::icon(widget::icon::from_name("window-close-symbolic"))
                         .on_press(Message::CancelRename)
                         .into(),
             ])
@@ -377,22 +377,38 @@ impl AppModel {
             .align_y(Alignment::Center)
             .into()
         } else {
-            let name_label = format!("{} ({})", fav.name, fav.hex);
-            widget::row(vec![
-                color_box.into(),
-                        widget::text::body(name_label).into(),
-                        widget::Space::new().width(Length::Fill).into(),
-                        widget::button::icon(widget::icon::from_name("document-edit-symbolic"))
-                        .on_press(Message::StartRename(idx, fav.name.clone()))
-                        .into(),
-                        widget::button::icon(widget::icon::from_name("edit-copy-symbolic"))
-                        .on_press(Message::CopyColor(hex_copy))
-                        .into(),
-                        widget::button::icon(widget::icon::from_name("user-trash-symbolic"))
-                        .on_press(Message::RemoveFavorite(idx))
-                        .into(),
+            // Columna central con Nombre arriba y HEX abajo
+            let text_info = widget::column::with_children(vec![
+                widget::text::body(&fav.name)
+                .wrapping(cosmic::iced::widget::text::Wrapping::None)
+                .into(),
+                                                          widget::text::caption(&fav.hex)
+                                                          .into(),
             ])
-            .spacing(6)
+            .spacing(2)
+            .width(Length::Fill);
+
+            // Fila de acciones a la derecha
+            let actions = widget::row::with_children(vec![
+                widget::button::icon(widget::icon::from_name("accessories-text-editor-symbolic"))
+                .on_press(Message::StartRename(idx, fav.name.clone()))
+                .into(),
+                widget::button::icon(widget::icon::from_name("edit-copy-symbolic"))
+                .on_press(Message::CopyColor(hex_copy))
+                .into(),
+                widget::button::icon(widget::icon::from_name("user-trash-symbolic"))
+                .on_press(Message::RemoveFavorite(idx))
+                .into(),
+            ])
+            .spacing(4)
+            .align_y(Alignment::Center);
+
+            widget::row::with_children(vec![
+                color_box.into(),
+                    text_info.into(),
+                    actions.into(),
+            ])
+            .spacing(8)
             .align_y(Alignment::Center)
             .into()
         }
