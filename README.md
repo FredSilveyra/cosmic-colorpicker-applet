@@ -5,10 +5,14 @@ A lightweight, native color picker panel applet built with Rust and `libcosmic` 
 ![License](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)
 ![COSMIC](https://img.shields.io/badge/COSMIC-Desktop-orange.svg)
 
-<img width="776" height="644" alt="Kooha-2026-09-22-22-59-44" src="https://github.com/user-attachments/assets/317a12ab-f96f-460a-be7c-98d600a16e91" />
-<img width="776" height="644" alt="Kooha-2026-09-22-22-59-58" src="https://github.com/user-attachments/assets/7edf3963-7a42-4a18-a147-3ca8d2ff291a" />
-<img width="776" height="644" alt="Kooha-2026-09-22-23-00-10" src="https://github.com/user-attachments/assets/d5a2d1bb-8a32-4c9a-b762-3030572b9a43" />
-<img width="776" height="644" alt="Kooha-2026-09-22-23-00-27" src="https://github.com/user-attachments/assets/d578b7d2-27e2-4c97-ba59-7fba7fed6034" />
+<p align="center">
+  <img width="400" alt="Opening the applet" src="https://github.com/user-attachments/assets/317a12ab-f96f-460a-be7c-98d600a16e91" />
+  <img width="400" alt="Picking a color with the loupe" src="https://github.com/user-attachments/assets/7edf3963-7a42-4a18-a147-3ca8d2ff291a" />
+</p>
+<p align="center">
+  <img width="400" alt="Managing favorites" src="https://github.com/user-attachments/assets/d5a2d1bb-8a32-4c9a-b762-3030572b9a43" />
+  <img width="400" alt="Recent colors history" src="https://github.com/user-attachments/assets/d578b7d2-27e2-4c97-ba59-7fba7fed6034" />
+</p>
 
 
 ## Features
