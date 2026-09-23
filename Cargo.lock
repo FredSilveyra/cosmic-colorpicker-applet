@@ -912,11 +912,13 @@ dependencies = [
 
 [[package]]
 name = "cosmic-colorpicker-applet"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "arboard",
+ "ashpd 0.12.3",
  "i18n-embed",
  "i18n-embed-fl",
+ "image",
  "libcosmic",
  "rust-embed",
  "serde",

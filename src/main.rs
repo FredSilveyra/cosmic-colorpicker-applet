@@ -3,14 +3,15 @@
 mod app;
 mod config;
 mod i18n;
+mod picker;
 
 fn main() -> cosmic::iced::Result {
-    // Get the system's preferred languages.
+    // Modo lupa: proceso aparte conectado directo al compositor (ver picker.rs).
+    if std::env::args().any(|a| a == "--pick") {
+        return picker::run();
+    }
+
     let requested_languages = i18n_embed::DesktopLanguageRequester::requested_languages();
-
-    // Enable localizations to be applied.
     i18n::init(&requested_languages);
-
-    // Starts the applet's event loop with `()` as the application's flags.
     cosmic::applet::run::<app::AppModel>(())
 }

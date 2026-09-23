@@ -8,3 +8,4 @@ Terminal=false
 Categories=Utility;Graphics;
 StartupNotify=true
 X-CosmicApplet=true
+X-HostWaylandDisplay=true

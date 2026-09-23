@@ -2,7 +2,7 @@
 // COSMIC Colorpicker Applet
 //
 // Author: Fred Silveyra (@fredsilveyra)
-// Co-author & Technical Assistance: Gemini (Google)
+// Co-author & Technical Assistance: Claude (Anthropic), Gemini (Google)
 // License: GPL-3.0-or-later
 // Repository: https://github.com/fredsilveyra/cosmic-colorpicker-applet
 // ============================================================================
@@ -113,17 +113,17 @@ impl cosmic::Application for AppModel {
 
     fn view(&self) -> Element<'_, Self::Message> {
         self.core
-        .applet
-        .icon_button("color-select-symbolic")
-        .on_press(Message::TogglePopup)
-        .into()
+            .applet
+            .icon_button("color-select-symbolic")
+            .on_press(Message::TogglePopup)
+            .into()
     }
 
     fn view_window(&self, _id: Id) -> Element<'_, Self::Message> {
         let mut list = widget::list_column().add(
             widget::button::standard("Pick Screen Color")
-            .leading_icon(widget::icon::from_name("color-select-symbolic"))
-            .on_press(Message::PickColor),
+                .leading_icon(widget::icon::from_name("color-select-symbolic"))
+                .on_press(Message::PickColor),
         );
 
         // Favorites Section
@@ -142,10 +142,10 @@ impl cosmic::Application for AppModel {
                 widget::text::title4("Recent Colors").into(),
                         widget::Space::new().width(Length::Fill).into(),
                         widget::button::text("Clear")
-                        .on_press(Message::ClearHistory)
-                        .into(),
+                            .on_press(Message::ClearHistory)
+                            .into(),
             ])
-            .align_y(Alignment::Center),
+                .align_y(Alignment::Center),
         );
 
         if self.config.history.is_empty() {
@@ -170,16 +170,16 @@ impl cosmic::Application for AppModel {
                     self.popup.replace(new_id);
                     let mut popup_settings = self.core.applet.get_popup_settings(
                         self.core.main_window_id().unwrap(),
-                                                                                 new_id,
-                                                                                 None,
-                                                                                 None,
-                                                                                 None,
+                            new_id,
+                            None,
+                            None,
+                            None,
                     );
                     popup_settings.positioner.size_limits = Limits::NONE
-                    .max_width(380.0)
-                    .min_width(360.0)
-                    .min_height(100.0)
-                    .max_height(600.0);
+                        .max_width(380.0)
+                        .min_width(360.0)
+                        .min_height(100.0)
+                        .max_height(600.0);
                     get_popup(popup_settings)
                 };
             }
@@ -202,58 +202,37 @@ impl cosmic::Application for AppModel {
 
                 let pick_task = Task::perform(
                     async move {
-                        tokio::task::spawn_blocking(|| {
-                            let slurp_out = StdCommand::new("slurp")
-                            .arg("-p")
+                        // La lupa corre en un proceso aparte: el applet vive dentro del
+                        // compositor anidado de cosmic-panel y no puede crear superficies
+                        // layer-shell. El hijo se conecta directo a cosmic-comp.
+                        let exe = std::env::current_exe().ok()?;
+                        let out = tokio::process::Command::new(exe)
+                            .arg("--pick")
+                            .env_remove("WAYLAND_SOCKET")
+                            .env_remove("X_PRIVILEGED_WAYLAND_SOCKET")
+                            .stdin(std::process::Stdio::null())
                             .output()
+                            .await
                             .ok()?;
-                            if !slurp_out.status.success() {
-                                return None;
-                            }
-                            let coords = String::from_utf8(slurp_out.stdout).ok()?;
-                            let coords = coords.trim();
-                            if coords.is_empty() {
-                                return None;
-                            }
+                        if !out.status.success() {
+                            return None;
+                        }
+                        let stdout = String::from_utf8(out.stdout).ok()?;
+                        let hex = stdout.lines().last()?.trim().to_string();
+                        if hex.len() != 7 || !hex.starts_with('#') {
+                            return None;
+                        }
 
-                            let grim = StdCommand::new("grim")
-                            .args(["-g", coords, "-t", "ppm", "-"])
-                            .stdout(std::process::Stdio::piped())
-                            .spawn()
-                            .ok()?;
-
-                            let magick = StdCommand::new("magick")
-                            .args(["-", "-format", "%[hex:p{0,0}]", "info:"])
-                            .stdin(grim.stdout?)
-                            .output()
-                            .ok()?;
-
-                            if !magick.status.success() {
-                                return None;
-                            }
-
-                            let raw_hex = String::from_utf8(magick.stdout).ok()?;
-                            let hex = raw_hex.trim();
-                            if hex.len() >= 6 {
-                                let final_hex = format!("#{}", &hex[..6].to_uppercase());
-
-                                let _ = StdCommand::new("wl-copy").arg(&final_hex).status();
-                                let _ = StdCommand::new("notify-send")
-                                .args([
-                                    "Color Picker",
-                                    &format!("Copied to clipboard: {}", final_hex),
-                                      "-i",
-                                      "color-select",
-                                ])
-                                .status();
-
-                                Some(final_hex)
-                            } else {
-                                None
-                            }
-                        })
-                        .await
-                        .ok()?
+                        let _ = StdCommand::new("wl-copy").arg(&hex).status();
+                        let _ = StdCommand::new("notify-send")
+                        .args([
+                            "Color Picker",
+                            &format!("Copied to clipboard: {}", hex),
+                              "-i",
+                              "color-select",
+                        ])
+                            .status();
+                        Some(hex)
                     },
                     |res| cosmic::Action::App(Message::ColorPicked(res)),
                 );
@@ -272,13 +251,13 @@ impl cosmic::Application for AppModel {
             Message::CopyColor(hex) => {
                 let _ = StdCommand::new("wl-copy").arg(&hex).status();
                 let _ = StdCommand::new("notify-send")
-                .args([
-                    "Color Picker",
-                    &format!("Copied to clipboard: {}", hex),
-                      "-i",
-                      "color-select",
-                ])
-                .status();
+                    .args([
+                        "Color Picker",
+                        &format!("Copied to clipboard: {}", hex),
+                        "-i",
+                        "color-select",
+                    ])
+                    .status();
             }
             Message::ToggleFavorite(hex) => {
                 if let Some(pos) = self.config.favorites.iter().position(|f| f.hex == hex) {
@@ -286,7 +265,7 @@ impl cosmic::Application for AppModel {
                 } else {
                     self.config.favorites.push(FavoriteColor {
                         name: "Custom Color".into(),
-                                               hex,
+                            hex,
                     });
                 }
                 self.save_config();
@@ -329,8 +308,8 @@ impl cosmic::Application for AppModel {
 
     fn subscription(&self) -> Subscription<Self::Message> {
         self.core()
-        .watch_config::<Config>(Self::APP_ID)
-        .map(|update| Message::UpdateConfig(update.config))
+            .watch_config::<Config>(Self::APP_ID)
+            .map(|update| Message::UpdateConfig(update.config))
     }
 
     fn style(&self) -> Option<cosmic::iced::theme::Style> {
@@ -361,17 +340,17 @@ impl AppModel {
         if is_editing {
             widget::row(vec![
                 color_box.into(),
-                        widget::text_input("Color name...", &self.edit_input_value)
-                        .on_input(Message::FavoriteNameInput)
-                        .on_submit(move |_| Message::SaveRename(idx))
-                        .width(Length::Fill)
-                        .into(),
-                        widget::button::standard("Save")
-                        .on_press(Message::SaveRename(idx))
-                        .into(),
-                        widget::button::icon(widget::icon::from_name("window-close-symbolic"))
-                        .on_press(Message::CancelRename)
-                        .into(),
+                widget::text_input("Color name...", &self.edit_input_value)
+                    .on_input(Message::FavoriteNameInput)
+                    .on_submit(move |_| Message::SaveRename(idx))
+                    .width(Length::Fill)
+                    .into(),
+                widget::button::standard("Save")
+                    .on_press(Message::SaveRename(idx))
+                    .into(),
+                widget::button::icon(widget::icon::from_name("window-close-symbolic"))
+                    .on_press(Message::CancelRename)
+                    .into(),
             ])
             .spacing(6)
             .align_y(Alignment::Center)
@@ -380,10 +359,10 @@ impl AppModel {
             // Columna central con Nombre arriba y HEX abajo
             let text_info = widget::column::with_children(vec![
                 widget::text::body(&fav.name)
-                .wrapping(cosmic::iced::widget::text::Wrapping::None)
-                .into(),
-                                                          widget::text::caption(&fav.hex)
-                                                          .into(),
+                    .wrapping(cosmic::iced::widget::text::Wrapping::None)
+                    .into(),
+                    widget::text::caption(&fav.hex)
+                        .into(),
             ])
             .spacing(2)
             .width(Length::Fill);
@@ -391,22 +370,22 @@ impl AppModel {
             // Fila de acciones a la derecha
             let actions = widget::row::with_children(vec![
                 widget::button::icon(widget::icon::from_name("accessories-text-editor-symbolic"))
-                .on_press(Message::StartRename(idx, fav.name.clone()))
-                .into(),
+                    .on_press(Message::StartRename(idx, fav.name.clone()))
+                    .into(),
                 widget::button::icon(widget::icon::from_name("edit-copy-symbolic"))
-                .on_press(Message::CopyColor(hex_copy))
-                .into(),
+                    .on_press(Message::CopyColor(hex_copy))
+                    .into(),
                 widget::button::icon(widget::icon::from_name("user-trash-symbolic"))
-                .on_press(Message::RemoveFavorite(idx))
-                .into(),
+                    .on_press(Message::RemoveFavorite(idx))
+                    .into(),
             ])
             .spacing(4)
             .align_y(Alignment::Center);
 
             widget::row::with_children(vec![
                 color_box.into(),
-                    text_info.into(),
-                    actions.into(),
+                text_info.into(),
+                actions.into(),
             ])
             .spacing(8)
             .align_y(Alignment::Center)
@@ -420,13 +399,13 @@ impl AppModel {
         let hex_fav = hex.to_string();
 
         let color_box = container(widget::Space::new())
-        .width(Length::Fixed(24.0))
-        .height(Length::Fixed(24.0))
-        .style(move |_theme| container::Style {
-            background: Some(color.into()),
-               border: cosmic::iced::border::rounded(4.0),
-               ..Default::default()
-        });
+            .width(Length::Fixed(24.0))
+            .height(Length::Fixed(24.0))
+            .style(move |_theme| container::Style {
+                background: Some(color.into()),
+                border: cosmic::iced::border::rounded(4.0),
+                ..Default::default()
+            });
 
         let star_icon = if is_fav {
             "starred-symbolic"
@@ -439,11 +418,11 @@ impl AppModel {
                     widget::text::body(hex).into(),
                     widget::Space::new().width(Length::Fill).into(),
                     widget::button::icon(widget::icon::from_name(star_icon))
-                    .on_press(Message::ToggleFavorite(hex_fav))
-                    .into(),
+                        .on_press(Message::ToggleFavorite(hex_fav))
+                        .into(),
                     widget::button::icon(widget::icon::from_name("edit-copy-symbolic"))
-                    .on_press(Message::CopyColor(hex_copy))
-                    .into(),
+                        .on_press(Message::CopyColor(hex_copy))
+                        .into(),
         ])
         .spacing(8)
         .align_y(Alignment::Center)
