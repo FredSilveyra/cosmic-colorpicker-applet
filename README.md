@@ -4,7 +4,7 @@ A lightweight, native color picker panel applet built with Rust and `libcosmic` 
 
 ![License](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)
 ![COSMIC](https://img.shields.io/badge/COSMIC-Desktop-orange.svg)
-[![Release](https://img.shields.io/github/v/release/fredsilveyra/cosmic-colorpicker-applet)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](CHANGELOG.md)
 
 <p align="center">
   <img width="400" alt="Opening the applet" src="https://github.com/user-attachments/assets/317a12ab-f96f-460a-be7c-98d600a16e91" />
