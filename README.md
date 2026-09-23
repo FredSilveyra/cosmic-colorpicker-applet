@@ -119,6 +119,7 @@ sudo just uninstall
 
 ## Credits & Authors
 - Fred Silveyra (@fredsilveyra)
+- Claude (Anthropic)
 - Gemini (Google)
 
 ## License
