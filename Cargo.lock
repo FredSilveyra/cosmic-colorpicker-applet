@@ -911,23 +911,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cosmic-colorpicker-applet"
-version = "1.0.0"
-dependencies = [
- "arboard",
- "ashpd 0.12.3",
- "i18n-embed",
- "i18n-embed-fl",
- "image",
- "libcosmic",
- "rust-embed",
- "serde",
- "serde_json",
- "tokio",
- "xdgen",
-]
-
-[[package]]
 name = "cosmic-config"
 version = "1.0.0"
 source = "git+https://github.com/pop-os/libcosmic.git#87ab8179e1bd9880239c340855ae8862034bd0e8"
@@ -955,6 +938,23 @@ source = "git+https://github.com/pop-os/libcosmic.git#87ab8179e1bd9880239c340855
 dependencies = [
  "quote",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "cosmic-ext-applet-colorpicker"
+version = "1.0.0"
+dependencies = [
+ "arboard",
+ "ashpd 0.12.3",
+ "i18n-embed",
+ "i18n-embed-fl",
+ "image",
+ "libcosmic",
+ "rust-embed",
+ "serde",
+ "serde_json",
+ "tokio",
+ "xdgen",
 ]
 
 [[package]]

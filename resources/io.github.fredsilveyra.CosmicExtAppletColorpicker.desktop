@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=COSMIC Color Picker
-Comment=Native color picker applet for the COSMIC Desktop
+Name=Color Picker
+Comment=Color picker applet for the COSMIC™ desktop
 Type=Application
-Exec=cosmic-colorpicker-applet
+Exec=cosmic-ext-applet-colorpicker
 Icon=color-select-symbolic
 Terminal=false
 Categories=Utility;Graphics;

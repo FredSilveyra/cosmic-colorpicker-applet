@@ -4,14 +4,14 @@
 // Author: Fred Silveyra (@fredsilveyra)
 // Co-author & Technical Assistance: Claude (Anthropic)
 // License: GPL-3.0-or-later
-// Repository: https://github.com/fredsilveyra/cosmic-colorpicker-applet
+// Repository: https://github.com/FredSilveyra/cosmic-ext-applet-colorpicker
 // ============================================================================
 
 // SPDX-License-Identifier: GPL-3.0-or-later
 //
 // Selector de color con lupa.
 //
-// Este módulo corre en un proceso aparte (`cosmic-colorpicker-applet --pick`).
+// Este módulo corre en un proceso aparte (`cosmic-ext-applet-colorpicker --pick`).
 // El applet vive dentro del compositor anidado de cosmic-panel, que solo
 // reenvía popups; por eso no puede crear superficies layer-shell. Este proceso
 // se conecta directo a cosmic-comp (WAYLAND_DISPLAY), así que sí puede abrir
@@ -108,7 +108,7 @@ impl cosmic::Application for Picker {
     type Flags = ();
     type Message = Message;
 
-    const APP_ID: &'static str = "com.github.fredsilveyra.cosmic-colorpicker-applet.picker";
+    const APP_ID: &'static str = "io.github.fredsilveyra.CosmicExtAppletColorpicker.Picker";
 
     fn core(&self) -> &cosmic::Core {
         &self.core

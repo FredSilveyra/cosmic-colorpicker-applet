@@ -4,7 +4,7 @@
 // Author: Fred Silveyra (@fredsilveyra)
 // Co-author & Technical Assistance: Gemini (Google)
 // License: GPL-3.0-or-later
-// Repository: https://github.com/fredsilveyra/cosmic-colorpicker-applet
+// Repository: https://github.com/FredSilveyra/cosmic-ext-applet-colorpicker
 // ============================================================================
 
 // SPDX-License-Identifier: GPL-3.0-or-later

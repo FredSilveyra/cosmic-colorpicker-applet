@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name={{ project-name | title_case }}
-Comment={{ description }}
+Name=Color Picker
+Comment=Color picker applet for the COSMIC™ desktop
 Type=Application
-Icon={{ appid }}
-Exec={{ project-name }} %F
+Icon=color-select-symbolic
+Exec=cosmic-ext-applet-colorpicker
 Terminal=false
 StartupNotify=true
 Categories=COSMIC
