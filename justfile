@@ -8,8 +8,22 @@ user_prefix := env_var("HOME") + "/.local"
 user_bindir := user_prefix + "/bin"
 user_datadir := user_prefix + "/share"
 
+# Verify build dependencies are available
+_check-deps:
+    @pkg-config --exists xkbcommon || { \
+        echo "Missing build dependency: xkbcommon development headers."; \
+        echo ""; \
+        echo "  Fedora / RHEL:     sudo dnf install libxkbcommon-devel pkgconf-pkg-config"; \
+        echo "  Debian / Ubuntu:   sudo apt install libxkbcommon-dev pkg-config"; \
+        echo "  Arch / Manjaro:    sudo pacman -S libxkbcommon pkgconf"; \
+        echo "  openSUSE:          sudo zypper install libxkbcommon-devel pkg-config"; \
+        echo ""; \
+        echo "Verify with: pkg-config --modversion xkbcommon"; \
+        exit 1; \
+    }
+
 # Build optimized release binary
-build:
+build: _check-deps
     cargo build --release
 
 # Local user installation (no sudo required)
