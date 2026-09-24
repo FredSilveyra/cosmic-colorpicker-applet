@@ -1,6 +1,6 @@
-app-title = {{ project-name | title_case }}
-app-comment = {{ description }}
-app-keywords =
+app-title = Color Picker
+app-comment = Color picker applet for the COSMIC™ desktop
+app-keywords = color;picker;colour;eyedropper;hex;palette;
 about = About
 view = View
 welcome = Welcome to COSMIC! ✨

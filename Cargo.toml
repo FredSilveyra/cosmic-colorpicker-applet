@@ -1,10 +1,10 @@
 [package]
-name = "cosmic-colorpicker-applet"
-version = "1.0.0"
+name = "cosmic-ext-applet-colorpicker"
+version = "1.1.0"
 edition = "2024"
-authors = ["Fred Silveyra <fredsilveyra>"]
-description = "Natively integrated color picker applet for the COSMIC Desktop panel"
-repository = "https://github.com/fredsilveyra/cosmic-colorpicker-applet"
+authors = ["Fred Silveyra"]
+description = "Color picker applet for the COSMIC™ desktop panel"
+repository = "https://github.com/FredSilveyra/cosmic-ext-applet-colorpicker"
 license = "GPL-3.0-or-later"
 keywords = ["cosmic", "wayland", "applet", "color-picker", "eyedropper"]
 categories = ["desktop-environment"]

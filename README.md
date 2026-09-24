@@ -1,10 +1,10 @@
-## COSMIC Color Picker Applet
+## Color Picker Applet for COSMIC™
 
 A lightweight, native color picker panel applet built with Rust and `libcosmic` for the COSMIC Desktop environment.
 
 ![License](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)
 ![COSMIC](https://img.shields.io/badge/COSMIC-Desktop-orange.svg)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](CHANGELOG.md)
 
 <p align="center">
   <img width="400" alt="Opening the applet" src="https://github.com/user-attachments/assets/317a12ab-f96f-460a-be7c-98d600a16e91" />
@@ -27,29 +27,39 @@ A lightweight, native color picker panel applet built with Rust and `libcosmic` 
 
 ## Requirements & Dependencies
 
-Make sure you have Rust and the required runtime tools installed. The screen capture uses `xdg-desktop-portal-cosmic`, which ships with COSMIC by default.
+Make sure you have Rust and the required build and runtime tools installed. The screen capture uses `xdg-desktop-portal-cosmic`, which ships with COSMIC by default.
 
 ### Fedora
 ```bash
-sudo dnf install -y rust cargo just wl-clipboard
+sudo dnf install -y rust cargo just wl-clipboard libxkbcommon-devel pkgconf-pkg-config
 ```
 
 ### Ubuntu/Pop!_OS
 ```bash
-sudo apt update && sudo apt install -y rustc cargo just wl-clipboard
+sudo apt update && sudo apt install -y rustc cargo just wl-clipboard libxkbcommon-dev pkg-config
 ```
 
 ### Arch Linux
 ```bash
-sudo pacman -S --needed rust just wl-clipboard
+sudo pacman -S --needed rust just wl-clipboard libxkbcommon pkgconf
 ```
+
+The `libxkbcommon` development headers are required at build time by a transitive
+Wayland dependency. Verify they are visible to `pkg-config` before building:
+
+```bash
+pkg-config --modversion xkbcommon
+```
+
+If that prints a version number you are ready to build. If it errors, the development
+package is missing and the build will fail.
 
 **Optional:** if the desktop portal is unavailable, the applet falls back to `grim` for screen capture when it is installed.
 
 ## Quick Installation
 ```bash
-git clone https://github.com/fredsilveyra/cosmic-colorpicker-applet.git
-cd cosmic-colorpicker-applet
+git clone https://github.com/FredSilveyra/cosmic-ext-applet-colorpicker.git
+cd cosmic-ext-applet-colorpicker
 ```
 
 ### Option A: Install for current user (Recommended, no sudo needed)
@@ -62,17 +72,34 @@ just install-user
 sudo just install
 ```
 
+Build as your normal user. Only the system-wide install step needs `sudo` — running
+the build itself with `sudo` leaves root-owned files in `target/` that cause
+permission errors later.
+
 After installing or updating, restart the panel so it picks up the applet's desktop entry:
 
 ```bash
 killall cosmic-panel
 ```
 
+### Upgrading from 1.0.0
+
+Version 1.1.0 renamed the project, the binary and the application ID. Uninstall the
+previous version **before** installing this one, or the old binary and desktop entry
+will be left behind:
+
+```bash
+just uninstall-user     # or: sudo just uninstall
+```
+
+Saved history and favorites are not carried over, because the application ID change
+moves where configuration is stored.
+
 ## Adding the Applet to the Panel
 
 1. Open Settings -> Desktop -> Panel.
 2. Scroll to the Applets configuration.
-3. Click Add Applet and select COSMIC Color Picker.
+3. Click Add Applet and select Color Picker.
 4. Drag and position the applet wherever you prefer (e.g., next to the system clock).
 
 ## Usage
@@ -84,7 +111,7 @@ killall cosmic-panel
 
 ## How It Works
 
-COSMIC panel applets run inside the panel's own nested compositor, which only forwards popups, so an applet cannot draw over the whole screen by itself. When you start picking, the applet launches a small helper process (`cosmic-colorpicker-applet --pick`) that connects directly to `cosmic-comp`. The helper:
+COSMIC panel applets run inside the panel's own nested compositor, which only forwards popups, so an applet cannot draw over the whole screen by itself. When you start picking, the applet launches a small helper process (`cosmic-ext-applet-colorpicker --pick`) that connects directly to `cosmic-comp`. The helper:
 
 1. Captures the screen into memory through the COSMIC desktop portal.
 2. Opens a transparent full-screen overlay using the Wayland layer-shell protocol.
@@ -92,19 +119,23 @@ COSMIC panel applets run inside the panel's own nested compositor, which only fo
 
 ## Troubleshooting
 
+**The build fails on `smithay-client-toolkit`:** the `xkbcommon` development headers are missing. See Requirements & Dependencies above.
+
 **The applet does not appear in the list:** restart the panel process with `killall cosmic-panel`.
+
+**Both an old and a new applet appear in the list:** you upgraded from 1.0.0 without uninstalling first. See Upgrading from 1.0.0 above.
 
 **The loupe does not open:** make sure the installed desktop entry includes `X-HostWaylandDisplay=true` (it is included by default) and restart the panel. You can also run the helper directly from a terminal to see any error messages:
 
 ```bash
-cosmic-colorpicker-applet --pick
+cosmic-ext-applet-colorpicker --pick
 ```
 
 **The loupe feels slow or leaves trails:** check which renderer is being used by forcing each one and comparing:
 
 ```bash
-ICED_BACKEND=wgpu cosmic-colorpicker-applet --pick
-ICED_BACKEND=tiny-skia cosmic-colorpicker-applet --pick
+ICED_BACKEND=wgpu cosmic-ext-applet-colorpicker --pick
+ICED_BACKEND=tiny-skia cosmic-ext-applet-colorpicker --pick
 ```
 
 ## Uninstall
@@ -131,8 +162,6 @@ See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 
 ## Screenshots
-
-<!-- Add a screenshot or GIF of the magnifier loupe here -->
 
 <img width="364" height="359" alt="image" src="https://github.com/user-attachments/assets/cc07e728-1b5b-4ab1-bc47-b6a9a2feb1f8" />
 
