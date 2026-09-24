@@ -1,0 +1,59 @@
+name: Bug report
+description: Something is broken or does not behave as documented
+labels: ["bug"]
+body:
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Before reporting
+      options:
+        - label: I have read the build dependencies section of the README, and `pkg-config --modversion xkbcommon` prints a version number.
+          required: true
+        - label: I searched the existing issues and did not find this one.
+          required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the applet from the panel
+        2. Click Pick Screen Color
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: distro
+    attributes:
+      label: Distribution and version
+      placeholder: Fedora 42, Pop!_OS 24.04, Arch, ...
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Applet version
+      description: The release tag you installed, or the commit you built from.
+      placeholder: v1.1.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Terminal output
+      description: >
+        For build failures, paste the error. For runtime problems, run
+        `cosmic-ext-applet-colorpicker --pick` from a terminal and paste
+        what it prints.
+      render: shell
